@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+require('./amenity');
+require('./media');
+require('./review');
 
 
 const propertySchema = new mongoose.Schema({
@@ -46,14 +49,10 @@ images: [{
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Media' 
 }],
-rating: { 
-    avg: { 
-        type: Number, 
-        default: 0 
-    }, count: { 
-        type: Number, 
-        default: 0 
-    } },
+reviews: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Review' 
+}],
 timezone: String,
 currency: { 
     type: String, 

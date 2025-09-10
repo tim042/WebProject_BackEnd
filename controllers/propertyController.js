@@ -26,27 +26,40 @@ const createProperty = async (req, res) => {
 };
 
 // Get all properties (with filters + pagination)
+
+
 const getProperties = async (req, res) => {
     try {
-        const { city, country, propertyType, status, page = 1, limit = 20 } = req.query;
+        const { search, city, country, propertyType, status, limit = 20, page = 1 } = req.query;
 
         let query = {};
+
+        // 🔍 Search by name or description
+        if (search) {
+            query.$text = { $search: search };
+        }
+
+        // 🌍 Filter by city/country
         if (city) query['address.city'] = city;
         if (country) query['address.country'] = country;
+
+        // 🏨 Filter by type
         if (propertyType) query.propertyType = propertyType;
+
+        // 📌 Filter by status
         if (status) query.status = status;
 
         const skip = (page - 1) * limit;
 
         const properties = await Property.find(query)
-            .populate('owner', '_id firstName lastName email')
-            .populate('amenities', 'name')
+            .populate('owner', 'firstName lastName email')
+            .populate('amenities', 'name icon description')
             .populate('images', 'url type')
-            .populate('review', 'rating comment user')
-
-            .skip(skip)
+            .populate('reviews', 'rating comment user')
+            .populate('cancellationPolicy', 'policyName rules')
+            .sort({ createdAt: -1 })
             .limit(parseInt(limit))
-            .sort({ createdAt: -1 });
+            .skip(skip);
 
         const total = await Property.countDocuments(query);
 
@@ -54,13 +67,17 @@ const getProperties = async (req, res) => {
             success: true,
             data: properties,
             pagination: {
-                current: parseInt(page),
+                currentPage: parseInt(page),
                 totalPages: Math.ceil(total / limit),
-                total
+                totalResults: total
             }
         });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching properties',
+            error: error.message
+        });
     }
 };
 
@@ -69,10 +86,10 @@ const getPropertyById = async (req, res) => {
     try {
         const property = await Property.findById(req.params.id)
             .populate('owner', 'firstName lastName email')
-            .populate('amenities', 'name')
+            .populate('amenities', 'name icon description')
             .populate('images', 'url type')
-            .populate('review', 'rating comment user')
-            .populate('cancellationPolicy');
+            .populate('reviews', 'rating comment user')
+            .populate('cancellationPolicy', 'policyName rules')
 
 
         if (!property) {

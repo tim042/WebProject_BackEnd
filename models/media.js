@@ -7,7 +7,7 @@ url: {
     required: true },
 type: { 
     type: String,
-    enum: Array('image video document'.split(' ')), 
+    enum: ['image', 'video', 'document'],
     default: 'image' 
 },
 provider: String,

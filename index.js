@@ -4,9 +4,11 @@ const morgan = require('morgan');
 const app = express();
 app.use(express.json());
 
+
 const authRoutes = require('./routes/authRoute');
 const userRoutes = require('./routes/userRouter');
 const propertyRoutes = require('./routes/propertyRoute');
+const bookingRoutes = require('./routes/bookingRoute');
 
 app.use(morgan('dev'));
 
@@ -14,6 +16,7 @@ app.use(morgan('dev'));
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/properties', propertyRoutes);
+app.use('/bookings', bookingRoutes);
 
 
 module.exports = app;
