@@ -1,17 +1,15 @@
 const Booking = require('../models/booking');
 const RoomType = require('../models/roomType');
 
-// สร้าง Booking
+
 const createBooking = async (req, res) => {
   try {
     const { property, roomType, rooms, guests, checkIn, checkOut, baseTotal, total, breakdown } = req.body;
 
-    // 1. ตรวจสอบ RoomType
     const room = await RoomType.findById(roomType);
     if (!room) return res.status(404).json({ success: false, message: 'Room type not found' });
     if (room.availableRooms < rooms) return res.status(400).json({ success: false, message: 'Not enough available rooms' });
 
-    // 2. สร้าง Booking
     const booking = new Booking({
       user: req.user.userId,
       property,
@@ -27,7 +25,6 @@ const createBooking = async (req, res) => {
 
     const savedBooking = await booking.save();
 
-    // 3. ลดจำนวน availableRooms
     room.availableRooms -= rooms;
     await room.save();
 
@@ -38,7 +35,6 @@ const createBooking = async (req, res) => {
   }
 };
 
-// ดึง Booking ของ user
 const getUserBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.userId })

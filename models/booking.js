@@ -9,18 +9,54 @@ const priceBreakdownSchema = new mongoose.Schema({
 }, { _id: false });
 
 const bookingSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
-  roomType: { type: mongoose.Schema.Types.ObjectId, ref: 'RoomType', required: true },
-  rooms: { type: Number, default: 1 },
-  guests: { type: Number, default: 1 },
-  checkIn: { type: Date, required: true },
-  checkOut: { type: Date, required: true },
+  user: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
+  property: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Property', 
+    required: true 
+  },
+  roomType: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'RoomType', 
+    required: true 
+  },
+  rooms: { 
+    type: Number, 
+    default: 1 
+  },
+  guests: { 
+    type: Number, 
+    default: 1 
+  },
+  checkIn: { 
+    type: Date, 
+    required: true 
+  },
+  checkOut: { 
+    type: Date,
+    required: true 
+  },
   nights: Number,
-  baseCurrency: { type: String, default: 'LAK' },
-  baseTotal: { type: Number, required: true },
-  displayCurrency: { type: String, default: 'LAK' },
-  total: { type: Number, required: true },
+  baseCurrency: { 
+    type: String, 
+    default: 'LAK'
+  },
+  baseTotal: { 
+    type: Number, 
+    required: true 
+  },
+  displayCurrency: { 
+    type: String, 
+    default: 'LAK' 
+  },
+  total: { 
+    type: Number, 
+    required: true 
+  },
   breakdown: priceBreakdownSchema,
   status: { 
     type: String, 
